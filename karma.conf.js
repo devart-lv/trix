@@ -98,6 +98,7 @@ if (process.env.CI) {
     commandTimeout: 600,
     maxDuration: 900,
     build: buildId(),
+    region: "eu-central-1",
   }
 }
 
