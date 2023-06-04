@@ -30,22 +30,23 @@ export default class BlockView extends ObjectView {
       return nodes
     } else {
       let attributes
-      const { tagName } = config.blockAttributes.default
+      const { tagName, className } = config.blockAttributes.default
       if (this.block.isRTL()) {
         attributes = { dir: "rtl" }
       }
 
-      const element = makeElement({ tagName, attributes })
+      const element = makeElement({ tagName, className, attributes })
       nodes.forEach((node) => element.appendChild(node))
       return [ element ]
     }
   }
 
   createContainerElement(depth) {
-    let attributes, className
+    let attributes
     const attributeName = this.attributes[depth]
 
     const { tagName } = getBlockConfig(attributeName)
+    let { className } = getBlockConfig(attributeName)
     if (depth === 0 && this.block.isRTL()) {
       attributes = { dir: "rtl" }
     }

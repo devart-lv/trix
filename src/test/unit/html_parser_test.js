@@ -348,6 +348,22 @@ testGroup("HTMLParser", () => {
       assert.documentHTMLEqual(document, expectedHTML)
     })
   })
+
+  test("parses block with className", () => {
+    const config = {
+      blockWithClassName: {
+        tagName: "div",
+        className: "class-name-1 class-name-2"
+      }
+    }
+
+    withBlockAttributeConfig(config, () => {
+      const html = "<div class=\"class-name-1 class-name-2\">a</div>"
+      const expectedHTML = "<div class=\"class-name-1 class-name-2\"><!--block-->a</div>"
+      const document = HTMLParser.parse(html).getDocument()
+      assert.documentHTMLEqual(document, expectedHTML)
+    })
+  })
 })
 
 const withParserConfig = (attrConfig = {}, fn) => {
@@ -375,6 +391,28 @@ const withConfig = (section, newConfig = {}, fn) => {
     fn()
   } finally {
     copy(section, originalConfig)
+  }
+}
+
+const withBlockAttributeConfig = (config = {}, fn) => {
+  const { blockAttributes } = Trix.config
+  const originalConfig = {}
+
+  for (const [ key, value ] of Object.entries(config)) {
+    originalConfig[key] = blockAttributes[key]
+    blockAttributes[key] = value
+  }
+
+  try {
+    fn()
+  } finally {
+    for (const [ key, value ] of Object.entries(originalConfig)) {
+      if (value) {
+        blockAttributes[key] = value
+      } else {
+        delete blockAttributes[key]
+      }
+    }
   }
 }
 
